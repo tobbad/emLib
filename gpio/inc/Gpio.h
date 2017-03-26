@@ -1,0 +1,23 @@
+#ifndef D_Gpio_H
+#define D_Gpio_H
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  Gpio is responsible for ...
+//
+///////////////////////////////////////////////////////////////////////////////
+
+class Gpio
+  {
+  public:
+    explicit Gpio();
+    virtual ~Gpio();
+
+  private:
+
+    Gpio(const Gpio&);
+    Gpio& operator=(const Gpio&);
+
+  };
+
+#endif  // D_Gpio_H
