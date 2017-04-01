@@ -40,7 +40,7 @@ testCutFiles = ()
 cutFolders =()
 genTestFolders = ('./tests/',)
 incPath  = ('inc/',)
-
+mockFiles = ()
 if  target == 'test_common':
     print("Create common tests.")
     cutFolders += ('./src/',)
@@ -49,12 +49,14 @@ elif target == 'test_display':
     print("Create display tests.")
     cutFolders += ('./src/','./display/src/')
     testCutFolders = ('./display/tests/',)
+    mockFiles+=(('tests','mock_common.cpp'),)
     incPath+=('display/inc/',)
 else:
     print("Build everything")
 
 testCutFiles += getSrcFromFolder(testCutFolders,'*Test.cpp',binFolder)
 testComFiles += getSrcFromFolder(genTestFolders,'AllTests.cpp',binFolder)
+testComFiles += mockFiles
 cutFiles = getSrcFromFolder(cutFolders,'*.cpp',binFolder)
 cutFiles += getSrcFromFolder(cutFolders,'*.c',binFolder)
 print(testComFiles)

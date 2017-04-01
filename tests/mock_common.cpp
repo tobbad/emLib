@@ -4,6 +4,7 @@
  *  Created on: 26.03.2017
  *      Author: badi
  */
+#include "common.h"
 
 elres_t device_check(device_t * dev, dev_func_t dev_type) {
 	bool is_ok=true;

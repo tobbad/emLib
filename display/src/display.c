@@ -36,6 +36,7 @@ dev_handle emLibDisplay_init(device_t * hwDisplay) {
     	for (uint8_t i=0;i< MAX_DISPALY_HANDLE_CNT;i++){
 			if (display[i].open == NULL)
 			{
+				display[i] = *hwDisplay;
 				hdl = i;
 			}
     	}
@@ -43,13 +44,16 @@ dev_handle emLibDisplay_init(device_t * hwDisplay) {
     return hdl;
 }
 
-void emLibDisplay_reset(void) {
-	device_reset(display);
+elres_t emLibDisplay_reset(dev_handle hdl) {
+	elres_t res = EMLIB_ERROR;
+	if ( (hdl> DEV_HANDLE_NOTDEFINED) && (hdl<MAX_DISPALY_HANDLE_CNT))
+	{
+		device_reset(&display[hdl]);
+		res = EMLIB_OK;
+	}
+	return res;
 }
 
 /*
  * Static function definitions
- */
-/*
- *
  */

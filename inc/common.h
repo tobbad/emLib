@@ -14,8 +14,8 @@ extern "C" {
 
 
 typedef enum {
+    EMLIB_ERROR = -1,
     EMLIB_OK = 0,
-    EMLIB_ERROR = 1
 } elres_t;
 
 typedef enum {
@@ -24,6 +24,8 @@ typedef enum {
     DEV_LAST,
     DEV_NOCMD = 0x7FFF
 } dev_command_t;
+
+#define DEV_HANDLE_NOTDEFINED   -1
 
 typedef int8_t dev_handle;  /**< A value >=0 is OK, otherwise this is invalid */
 
@@ -46,7 +48,6 @@ typedef struct device_s {
     elres_t (*close)(dev_handle hdl);
 } device_t;
 
-#define DEV_HANDLE_NOTDEFINED   -1
 
 elres_t device_check(device_t * dev, dev_func_t dev_type);
 void device_reset(device_t * dev);

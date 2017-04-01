@@ -84,7 +84,7 @@ TEST(DISPLAY, Create_with_missing_function)
         init_struct(i);
         res = emLibDisplay_init(&disp);
         CHECK_EQUAL(exp, res);
-        emLibDisplay_reset();
+        emLibDisplay_reset(res);
     }
 }
 

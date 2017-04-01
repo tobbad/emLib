@@ -24,7 +24,7 @@ typedef enum {
 
 
 dev_handle emLibDisplay_init(device_t * hwDisplay);
-void emLibDisplay_reset(void);
+elres_t emLibDisplay_reset(dev_handle handle);
 
 
 #ifdef __cplusplus
