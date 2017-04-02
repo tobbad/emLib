@@ -24,7 +24,7 @@ def RegisterSrcFolderInEnv(srcDirs, env, trgtDir):
         env.VariantDir(trgtDir+srcF, srcF, duplicate=0)
 
 def modify_chip_definitions(files=None, define_name='PERIPH_BASE'):
-    keyPtr1 = re.compile(r'#if defined\((.*)\)')
+    keyPtr1 = re.compile(r'#if[\s]+!defined\((.*)\)')
     keyPtr2 = re.compile(r'#define[\s]+(%s)[\s]+([0-9xU]+)[\s]+(.*)' %define_name) 
     if files is None:
         files = ('pin','test','stm','f4','inc','stm32f4[0-9]*')
@@ -33,17 +33,22 @@ def modify_chip_definitions(files=None, define_name='PERIPH_BASE'):
         with open(f, 'rw') as fd:
             res = []
             for line in fd.readlines():
+                line = line.strip()
                 mtch = keyPtr1.match(line)
                 if mtch is not None:
-                    res = None
+                    print("file %s is already modified" % f)
+                    res = None                    
                     break
                 mtch = keyPtr2.match(line)
                 if mtch is not None:
-                    print(mtch.groups())
+                    res.append("#if !defined(%s)" % define_name)
+                res.append(line)
+                if mtch is not None:
+                    res.append("#endif")
         if res is not None:
+            print("Rewrite %s" % f)
             with open(f, 'w') as fd:
-                fw.write(os.linesep.join(res))               
-        #break
+                fd.write(os.linesep.join(res))               
 modify_chip_definitions()
 testComLib = 'ctest'
 cutLib  =   'cut'
