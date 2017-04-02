@@ -24,6 +24,7 @@ def RegisterSrcFolderInEnv(srcDirs, env, trgtDir):
 
 testComLib = 'ctest'
 cutLib  =   'cut'
+drvLib  =   'drv'
 debug = False
 
 if ARGUMENTS.get('debug', '0') == '1':
@@ -41,6 +42,10 @@ cutFolders =()
 genTestFolders = ('./test/',)
 incPath  = ('inc/',)
 
+drvFiles =()
+drvFolder =()
+linkLibs =(cutLib,testComLib)
+
 if  target == 'test_common':
     print("Create common tests.")
     cutFolders += ('./src/',)
@@ -52,53 +57,54 @@ elif target == 'test_display':
     testComFiles += getSrcFromFolder(genTestFolders,'mock_common.cpp',binFolder)
     incPath+=('display/inc/',)
 elif target == 'test_pin':
-	print("Create pin tests.")
-	cutFolders += ('./pin/src/', )
-	testCutFolders = ('./pin/test/',)
-	incPath+=('pin/inc/',)
+    print("Create pin tests.")
+    cutFolders += ('./pin/src/', )
+    testCutFolders = ('./pin/test/',)
+    drvFolder = ('./pin/drv/',)
+    drvFiles += getSrcFromFolder(drvFolder,'pin_mock.cpp',binFolder)
+    incPath+=('pin/inc/',)
+    incPath+=('pin/drv/',)
+    incPath+=('port/inc/',)
+    linkLibs +=(drvLib,)
+    
 else:
     print("Build everything")
 
-testCutFiles += getSrcFromFolder(testCutFolders,'*Test.cpp',binFolder)
+linkLibs += ('CppUTest','CppUTestExt')
+testCutFiles += getSrcFromFolder(testCutFolders,'*test.cpp',binFolder)
 testComFiles += getSrcFromFolder(genTestFolders,'AllTests.cpp',binFolder)
-cutFiles = getSrcFromFolder(cutFolders,'*.cpp',binFolder)
+cutFiles  = getSrcFromFolder(cutFolders,'*.cpp',binFolder)
 cutFiles += getSrcFromFolder(cutFolders,'*.c',binFolder)
 print(testComFiles)
 print(testCutFiles)
 print(cutFiles)
-linkLibs = ('CppUTest','CppUTestExt')
+print(linkLibs)
 libPath  = binFolder
 ccDebFlags = '-g'
 ccFlags  = '-Wall -DUNIT_TEST ' + ("" if not debug else " %s" % ccDebFlags)
 cflags = " -std=c11"
 cxxflags=" -std=c++11"
-print(ccFlags)
 env = Environment(variant_dir=binFolder,
                   LIBPATH=binFolder,
-                  LIBS=(cutLib,testComLib)+linkLibs,
+                  LIBS=linkLibs,
                   CPPPATH=incPath, CCFLAGS=ccFlags,
                   CFLAGS=cflags, CXXFLAGS=cxxflags)
 
 RegisterSrcFolderInEnv(cutFolders, env, binFolder)
 env.Library(target=binFolder+cutLib, source= cutFiles)
 
+if len(drvFiles)>0:
+	print("Build driver library")
+	RegisterSrcFolderInEnv(drvFolder, env, binFolder)
+	env.Library(target=binFolder+drvLib, source= drvFiles)
+
 RegisterSrcFolderInEnv(testCutFolders, env, binFolder)
 
 RegisterSrcFolderInEnv(genTestFolders, env, binFolder)
 env.Library(target=binFolder+testComLib, source= testComFiles)
 
-if target == '':
-    print("Not supported")
-    sys.exit()
-    f='common/Test.cpp'
-    of=of=f.split(os.sep)[1].split('.')[0]
-    env.Program(binFolder+of, (binFolder+f,))
-    for f in glob.glob('*/test/*Test.cpp'):
-        of=f.split(os.sep)[1].split('.')[0]
-        env.Program(binFolder+of, (binFolder+f,))
-else:
-     for f in testCutFiles:
-        of=f.split(os.sep)[-1].split('.')[0]
-        print(f, of)
-        env.Program(binFolder+of, (f,))
+for f in testCutFiles:
+    of=f.split(os.sep)[-1].split('.')[0]
+    of = 'unit_test'
+    env.Program(binFolder+of, (f,))
    
