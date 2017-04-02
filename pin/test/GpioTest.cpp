@@ -1,15 +1,15 @@
-#include "Gpio.h"
+#include "Pin.h"
 
 //CppUTest includes should be after your and system includes
 #include "CppUTest/TestHarness.h"
 
-TEST_GROUP(Gpio)
+TEST_GROUP(Pin)
 {
-  Gpio* gpio;
+  Pin* gpio;
 
   void setup()
   {
-    gpio = new Gpio();
+    gpio = new Pin();
   }
   void teardown()
   {
@@ -17,7 +17,7 @@ TEST_GROUP(Gpio)
   }
 };
 
-TEST(Gpio, Create)
+TEST(Pin, Create)
 {
   FAIL("Start here");
 }

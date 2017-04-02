@@ -1,23 +1,22 @@
-#ifndef D_Gpio_H
-#define D_Gpio_H
+#ifndef D_Pin_H
+#define D_Pin_H
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  Gpio is responsible for ...
+//  Pin is responsible for ...
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-class Gpio
-  {
+class Pin {
   public:
-    explicit Gpio();
-    virtual ~Gpio();
+    explicit Pin();
+    virtual ~Pin();
 
   private:
 
-    Gpio(const Gpio&);
-    Gpio& operator=(const Gpio&);
+    Pin(const Pin&);
+    Pin& operator=(const Pin&);
 
   };
 
-#endif  // D_Gpio_H
+#endif  // D_Pin_H

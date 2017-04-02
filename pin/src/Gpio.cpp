@@ -1,10 +1,10 @@
-#include "Gpio.h"
+#include "Pin.h"
 
-Gpio::Gpio()
+Pin::Pin()
 {
 }
 
-Gpio::~Gpio()
+Pin::~Pin()
 {
 }
 
