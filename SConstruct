@@ -38,19 +38,24 @@ target = ARGUMENTS.get('target', '')
 testComFiles =()
 testCutFiles = ()
 cutFolders =()
-genTestFolders = ('./tests/',)
+genTestFolders = ('./test/',)
 incPath  = ('inc/',)
 
 if  target == 'test_common':
     print("Create common tests.")
     cutFolders += ('./src/',)
-    testCutFolders = ('./tests/',)
+    testCutFolders = ('./test/',)
 elif target == 'test_display':
     print("Create display tests.")
     cutFolders += ('./display/src/', )
-    testCutFolders = ('./display/tests/',)
+    testCutFolders = ('./display/test/',)
     testComFiles += getSrcFromFolder(genTestFolders,'mock_common.cpp',binFolder)
     incPath+=('display/inc/',)
+elif target == 'test_pin':
+	print("Create pin tests.")
+	cutFolders += ('./pin/src/', )
+	testCutFolders = ('./pin/test/',)
+	incPath+=('pin/inc/',)
 else:
     print("Build everything")
 
@@ -88,7 +93,7 @@ if target == '':
     f='common/Test.cpp'
     of=of=f.split(os.sep)[1].split('.')[0]
     env.Program(binFolder+of, (binFolder+f,))
-    for f in glob.glob('*/tests/*Test.cpp'):
+    for f in glob.glob('*/test/*Test.cpp'):
         of=f.split(os.sep)[1].split('.')[0]
         env.Program(binFolder+of, (binFolder+f,))
 else:

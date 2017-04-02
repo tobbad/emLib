@@ -223,5 +223,3 @@ TEST(DISPLAY_PAINT, pre_cond_check) {
     CHECK_EQUAL(exp, act);
 }
 
-TEST(DISPLAY_PAINT, pre_cond_check) {
-}

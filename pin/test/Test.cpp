@@ -3,18 +3,17 @@
 //CppUTest includes should be after your and system includes
 #include "CppUTest/TestHarness.h"
 
-TEST_GROUP(Pin)
-{
-  Pin* gpio;
+TEST_GROUP(Pin) {
+	Pin* pin;
 
-  void setup()
-  {
-    gpio = new Pin();
-  }
-  void teardown()
-  {
-    delete gpio;
-  }
+	void setup()
+	{
+		pin = new Pin();
+	}
+	void teardown()
+	{
+		delete pin;
+	}
 };
 
 TEST(Pin, Create)
