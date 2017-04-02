@@ -1,6 +1,7 @@
 import glob
 import os
 import sys
+import re
 
 def checkDirEnding(fdir):
     return fdir if fdir[-1] == os.sep else fdir+os.sep
@@ -22,6 +23,28 @@ def RegisterSrcFolderInEnv(srcDirs, env, trgtDir):
         srcF = checkDirEnding(srcF)
         env.VariantDir(trgtDir+srcF, srcF, duplicate=0)
 
+def modify_chip_definitions(files=None, define_name='PERIPH_BASE'):
+    keyPtr1 = re.compile(r'#if defined\((.*)\)')
+    keyPtr2 = re.compile(r'#define[\s]+(%s)[\s]+([0-9xU]+)[\s]+(.*)' %define_name) 
+    if files is None:
+        files = ('pin','test','stm','f4','inc','stm32f4[0-9]*')
+    for f in glob.glob(os.sep.join(files)):
+        print("Check file %s " % f)
+        with open(f, 'rw') as fd:
+            res = []
+            for line in fd.readlines():
+                mtch = keyPtr1.match(line)
+                if mtch is not None:
+                    res = None
+                    break
+                mtch = keyPtr2.match(line)
+                if mtch is not None:
+                    print(mtch.groups())
+        if res is not None:
+            with open(f, 'w') as fd:
+                fw.write(os.linesep.join(res))               
+        #break
+modify_chip_definitions()
 testComLib = 'ctest'
 cutLib  =   'cut'
 drvLib  =   'drv'
@@ -57,16 +80,21 @@ elif target == 'test_display':
     testComFiles += getSrcFromFolder(genTestFolders,'mock_common.cpp',binFolder)
     incPath+=('display/inc/',)
 elif target == 'test_pin':
-    print("Create pin tests.")
+    print("Create pin mock tests.")
     cutFolders += ('./pin/src/', )
     testCutFolders = ('./pin/test/',)
     drvFolder = ('./pin/drv/',)
     drvFiles += getSrcFromFolder(drvFolder,'pin_mock.cpp',binFolder)
+    drvFiles += getSrcFromFolder(drvFolder,'pin_stm32f4.cpp',binFolder)
     incPath+=('pin/inc/',)
+    incPath+=('pin/test/',)
+    incPath+=('pin/test/stm/',)
+    incPath+=('pin/test/stm/f4/',)
+    incPath+=('pin/test/stm/f4/inc/',)
     incPath+=('pin/drv/',)
     incPath+=('port/inc/',)
     linkLibs +=(drvLib,)
-    
+    ccFlags ="-DSTM32F407xx -DSTM32 "
 else:
     print("Build everything")
 
@@ -81,7 +109,7 @@ print(cutFiles)
 print(linkLibs)
 libPath  = binFolder
 ccDebFlags = '-g'
-ccFlags  = '-Wall -DUNIT_TEST ' + ("" if not debug else " %s" % ccDebFlags)
+ccFlags  += '-Wall -DUNIT_TEST ' + ("" if not debug else " %s" % ccDebFlags)
 cflags = " -std=c11"
 cxxflags=" -std=c++11"
 env = Environment(variant_dir=binFolder,
@@ -105,6 +133,5 @@ env.Library(target=binFolder+testComLib, source= testComFiles)
 
 for f in testCutFiles:
     of=f.split(os.sep)[-1].split('.')[0]
-    of = 'unit_test'
     env.Program(binFolder+of, (f,))
    

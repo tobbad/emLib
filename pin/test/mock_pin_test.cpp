@@ -24,7 +24,6 @@ TEST_GROUP(PIN) {
 TEST(PIN, Read)
 {
 	bool exp, act;
-	//PinMock pin = PinMock(Port::port_t::PORTA, Pin::pin_t::PIN_0);
 
 	exp = true;
 	mock().expectOneCall("read").onObject(pin).andReturnValue(exp);
