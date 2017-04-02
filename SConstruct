@@ -40,23 +40,22 @@ testCutFiles = ()
 cutFolders =()
 genTestFolders = ('./tests/',)
 incPath  = ('inc/',)
-mockFiles = ()
+
 if  target == 'test_common':
     print("Create common tests.")
     cutFolders += ('./src/',)
     testCutFolders = ('./tests/',)
 elif target == 'test_display':
     print("Create display tests.")
-    cutFolders += ('./src/','./display/src/')
+    cutFolders += ('./display/src/', )
     testCutFolders = ('./display/tests/',)
-    mockFiles+=(('tests','mock_common.cpp'),)
+    testComFiles += getSrcFromFolder(genTestFolders,'mock_common.cpp',binFolder)
     incPath+=('display/inc/',)
 else:
     print("Build everything")
 
 testCutFiles += getSrcFromFolder(testCutFolders,'*Test.cpp',binFolder)
 testComFiles += getSrcFromFolder(genTestFolders,'AllTests.cpp',binFolder)
-testComFiles += mockFiles
 cutFiles = getSrcFromFolder(cutFolders,'*.cpp',binFolder)
 cutFiles += getSrcFromFolder(cutFolders,'*.c',binFolder)
 print(testComFiles)
@@ -65,9 +64,10 @@ print(cutFiles)
 linkLibs = ('CppUTest','CppUTestExt')
 libPath  = binFolder
 ccDebFlags = '-g'
-ccFlags  = '-Wall ' + "" if not debug else " %s" % ccDebFlags
+ccFlags  = '-Wall -DUNIT_TEST ' + ("" if not debug else " %s" % ccDebFlags)
 cflags = " -std=c11"
 cxxflags=" -std=c++11"
+print(ccFlags)
 env = Environment(variant_dir=binFolder,
                   LIBPATH=binFolder,
                   LIBS=(cutLib,testComLib)+linkLibs,

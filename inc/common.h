@@ -12,6 +12,11 @@ extern "C" {
 #endif
 #include <stdint.h>
 
+#ifdef UNIT_TEST
+#define STATIC
+#else
+#define STATIC static
+#endif
 
 typedef enum {
     EMLIB_ERROR = -1,
@@ -49,14 +54,9 @@ typedef struct device_s {
 } device_t;
 
 
-elres_t device_check(device_t * dev, dev_func_t dev_type);
-void device_reset(device_t * dev);
-void device_print(device_t * dev);
-
-
-
-
-
+elres_t device_check(const device_t * dev, dev_func_t dev_type);
+elres_t device_free(device_t * dev);
+void device_print(const device_t * dev);
 
 
 #ifdef __cplusplus
