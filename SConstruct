@@ -29,14 +29,13 @@ def modify_chip_definitions(files=None, define_name='PERIPH_BASE'):
     if files is None:
         files = ('pin','test','stm','f4','inc','stm32f4[0-9]*')
     for f in glob.glob(os.sep.join(files)):
-        print("Check file %s " % f)
         with open(f, 'rw') as fd:
             res = []
             for line in fd.readlines():
                 line = line.strip()
                 mtch = keyPtr1.match(line)
                 if mtch is not None:
-                    print("file %s is already modified" % f)
+                    #print("file %s is already modified" % f)
                     res = None                    
                     break
                 mtch = keyPtr2.match(line)
@@ -49,6 +48,7 @@ def modify_chip_definitions(files=None, define_name='PERIPH_BASE'):
             print("Rewrite %s" % f)
             with open(f, 'w') as fd:
                 fd.write(os.linesep.join(res))               
+
 modify_chip_definitions()
 testComLib = 'ctest'
 cutLib  =   'cut'
@@ -78,14 +78,16 @@ if  target == 'test_common':
     print("Create common tests.")
     cutFolders += ('./src/',)
     testCutFolders = ('./test/',)
+    ccFlags  = '-DUNIT_TEST '
 elif target == 'test_display':
     print("Create display tests.")
     cutFolders += ('./display/src/', )
     testCutFolders = ('./display/test/',)
     testComFiles += getSrcFromFolder(genTestFolders,'mock_common.cpp',binFolder)
     incPath+=('display/inc/',)
+    ccFlags  = '-DUNIT_TEST '
 elif target == 'test_pin':
-    print("Create pin mock tests.")
+    print("Create pin tests.")
     cutFolders += ('./pin/src/', )
     testCutFolders = ('./pin/test/',)
     drvFolder = ('./pin/drv/',)
@@ -99,9 +101,17 @@ elif target == 'test_pin':
     incPath+=('pin/drv/',)
     incPath+=('port/inc/',)
     linkLibs +=(drvLib,)
-    ccFlags ="-DSTM32F407xx -DSTM32 "
+    ccFlags ='-DSTM32F407xx -DSTM32 -DUNIT_TEST '
+elif target == 'emlib':
+    print("Building all embedded libraries")
+    arch = {'v6-m':None,
+            'v7-m':None,
+            'v7e-m':('fpv5-d16','fpv5-sp-d16',))
+    binFolder = ('lib',)+tuple(binFolder.split('/')[1:])
+    binFolder = os.sep.join(binFolder)
 else:
-    print("Build everything")
+    print("Unknown target {0}".format(target))
+    sys.exit()
 
 linkLibs += ('CppUTest','CppUTestExt')
 testCutFiles += getSrcFromFolder(testCutFolders,'*test.cpp',binFolder)
@@ -113,9 +123,9 @@ print(testCutFiles)
 print(cutFiles)
 print(linkLibs)
 libPath  = binFolder
-ccDebFlags = '-g'
-ccFlags  += '-Wall -DUNIT_TEST ' + ("" if not debug else " %s" % ccDebFlags)
-cflags = " -std=c11"
+ccDebFlags = '-g '
+ccFlags  += '-Wall ' + ("" if not debug else " %s" % ccDebFlags)
+cflags  =" -std=c11"
 cxxflags=" -std=c++11"
 env = Environment(variant_dir=binFolder,
                   LIBPATH=binFolder,

@@ -32,8 +32,16 @@ class Pin {
 		};
 
 		enum class pin_mode_t {
-			OUTPUT = 1,
-			INPUT  = 2,
+			INPUT     = 0,
+			OUTPUT    = 1,
+			OUTPUT_OD = 2,
+			PULL_NO   = 3,
+			PULL_UP   = 4,
+			PULL_DOWN = 5,
+			SPEED_LOW = 6,
+			SPEED_MEDIUM= 7,
+			SPEED_HIGH 	= 8,
+			SPEED_VERY_HIGH = 9,
 		};
 
 	public:

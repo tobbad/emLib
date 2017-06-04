@@ -14,7 +14,7 @@
 class PinStm32f4: public Pin {
 
 public:
-	PinStm32f4(Port::port_t port, Pin::pin_t pin):Pin(port, pin){};
+	PinStm32f4(Port::port_t port, Pin::pin_t pin);
 	~PinStm32f4(){};
 	bool 	read();
 	elres_t write(bool value);
@@ -25,6 +25,7 @@ protected:
 private:
 	static const Port::port_t MAX_PORT = Port::port_t::PORTD;
 	static const Port::port_width_t PORT_WIDTH = Port::port_width_t::PORT_16;
+	GPIO_InitTypeDef  pin_conf;
 
 };
 
