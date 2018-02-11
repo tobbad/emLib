@@ -26,6 +26,7 @@ enum class port_t {
 enum class port_width_t {
 	PORT_8,
 	PORT_16,
+	PORT_32,
 };
 
 }

@@ -106,7 +106,7 @@ elif target == 'emlib':
     print("Building all embedded libraries")
     arch = {'v6-m':None,
             'v7-m':None,
-            'v7e-m':('fpv5-d16','fpv5-sp-d16',))
+            'v7e-m':('fpv5-d16','fpv5-sp-d16',)}
     binFolder = ('lib',)+tuple(binFolder.split('/')[1:])
     binFolder = os.sep.join(binFolder)
 else:
@@ -126,7 +126,7 @@ libPath  = binFolder
 ccDebFlags = '-g '
 ccFlags  += '-Wall ' + ("" if not debug else " %s" % ccDebFlags)
 cflags  =" -std=c11"
-cxxflags=" -std=c++11"
+cxxflags=" -std=c++1z"
 env = Environment(variant_dir=binFolder,
                   LIBPATH=binFolder,
                   LIBS=linkLibs,
@@ -148,5 +148,6 @@ env.Library(target=binFolder+testComLib, source= testComFiles)
 
 for f in testCutFiles:
     of=f.split(os.sep)[-1].split('.')[0]
+    print("Build executable %s" % of)
     env.Program(binFolder+of, (f,))
    

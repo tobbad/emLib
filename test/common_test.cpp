@@ -1,7 +1,9 @@
 
 
-#include <stdio.h>
+#include <iostream>
+#include <cstdint>
 #include "common.h"
+#include "mcal_reg_access_tpl.h"
 //CppUTest includes should be after your and system includes
 #include "CppUTest/TestHarness.h"
 
@@ -13,20 +15,20 @@ elres_t dummy_close(dev_handle hdl){ return EMLIB_ERROR;};
 
 
 TEST_GROUP(DEVICE) {
-    
+
     device_t dev;
 
     void setup()
     {
 
-        
+
     }
-    
+
     void teardown()
     {
 
     }
-    
+
     void init_struct(uint8_t select){
         uint8_t idx = 0;
         if (select & (1<<idx)) {
@@ -140,6 +142,3 @@ TEST(DEVICE, Create_with_missing_function){
         }
    }
 }
-
-
-
