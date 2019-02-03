@@ -101,11 +101,9 @@ elif target == 'test_display':
     ccFlags  = '-DUNIT_TEST '
 elif target == 'test_pin':
     print("Create pin tests.")
-    # cutFolders += ('./pin/drv/stm32/f4/', )
+    #cutFolders += ('./pin/drv/mock/', )
+    cutFolders += ('./pin/drv/stm32/f4/', )
     testCutFolders = ('./pin/test/',)
-    drvFolder = ('./pin/drv/mock',)
-    drvFiles += getSrcFromFolder(drvFolder,'pin.cpp',binFolder)
-    # drvFiles += getSrcFromFolder(drvFolder,'pin_stm32f4.cpp',binFolder)
     incPath+=('pin/inc/',)
     incPath+=('pin/test/',)
     incPath+=('pin/test/stm/',)

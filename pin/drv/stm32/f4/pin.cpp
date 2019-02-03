@@ -10,7 +10,7 @@
 #include "stm32f4xx_hal_gpio.h"
 
 
-Pin::Pin(Port::port_t port, Pin::pin_t pin):Pin(port, pin) {}
+Pin::Pin(Port::port_t port, Pin::pin_t pin):pin(pin), port(port){}
 
 
 bool Pin::read(){
