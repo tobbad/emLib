@@ -55,6 +55,15 @@ cutLib  =   'cut'
 drvLib  =   'drv'
 debug = False
 
+xcompile_options = {
+    "CC"    : "arm-none-eabi-gcc",
+    "CXX"   : "arm-none-eabi-g++",
+    "LD"    : "arm-none-eabi-g++",
+    "AR"    : "arm-none-eabi-ar",
+    "STRIP" : "arm-none-eabi-strip",
+}
+compile_opt={}
+
 if ARGUMENTS.get('debug', '0') == '1':
     print "*** Debug build..."
     binFolder = 'bin/Debug/'
@@ -67,8 +76,10 @@ target = ARGUMENTS.get('target', '')
 testComFiles =()
 testCutFiles = ()
 cutFolders =()
+testCutFolders = ()
 genTestFolders = ('./test/',)
 incPath  = ('inc/',)
+incPath  += ('mcal/',)
 
 drvFiles =()
 drvFolder =()
@@ -79,6 +90,8 @@ if  target == 'test_common':
     cutFolders += ('./src/',)
     testCutFolders = ('./test/',)
     ccFlags  = '-DUNIT_TEST '
+    incPath  += ('test/',)
+    linkFlags = '-Xlinker -Map=output.map'
 elif target == 'test_display':
     print("Create display tests.")
     cutFolders += ('./display/src/', )
@@ -88,27 +101,32 @@ elif target == 'test_display':
     ccFlags  = '-DUNIT_TEST '
 elif target == 'test_pin':
     print("Create pin tests.")
-    cutFolders += ('./pin/src/', )
+    # cutFolders += ('./pin/drv/stm32/f4/', )
     testCutFolders = ('./pin/test/',)
-    drvFolder = ('./pin/drv/',)
-    drvFiles += getSrcFromFolder(drvFolder,'pin_mock.cpp',binFolder)
-    drvFiles += getSrcFromFolder(drvFolder,'pin_stm32f4.cpp',binFolder)
+    drvFolder = ('./pin/drv/mock',)
+    drvFiles += getSrcFromFolder(drvFolder,'pin.cpp',binFolder)
+    # drvFiles += getSrcFromFolder(drvFolder,'pin_stm32f4.cpp',binFolder)
     incPath+=('pin/inc/',)
     incPath+=('pin/test/',)
     incPath+=('pin/test/stm/',)
     incPath+=('pin/test/stm/f4/',)
     incPath+=('pin/test/stm/f4/inc/',)
-    incPath+=('pin/drv/',)
+    incPath+=('pin/inc/',)
     incPath+=('port/inc/',)
     linkLibs +=(drvLib,)
+    linkFlags = ''
     ccFlags ='-DSTM32F407xx -DSTM32 -DUNIT_TEST '
 elif target == 'emlib':
+    libFiles = ()
+    ccFlags  = ' '
     print("Building all embedded libraries")
     arch = {'v6-m':None,
             'v7-m':None,
             'v7e-m':('fpv5-d16','fpv5-sp-d16',)}
     binFolder = ('lib',)+tuple(binFolder.split('/')[1:])
     binFolder = os.sep.join(binFolder)
+    linkFlags = '-Xlinker -Map=output.map'
+    compile_opt = xcompile_options
 else:
     print("Unknown target {0}".format(target))
     sys.exit()
@@ -131,7 +149,8 @@ env = Environment(variant_dir=binFolder,
                   LIBPATH=binFolder,
                   LIBS=linkLibs,
                   CPPPATH=incPath, CCFLAGS=ccFlags,
-                  CFLAGS=cflags, CXXFLAGS=cxxflags)
+                  CFLAGS=cflags, CXXFLAGS=cxxflags,
+                  LINKFLAGS=linkFlags, **compile_opt)
 
 RegisterSrcFolderInEnv(cutFolders, env, binFolder)
 env.Library(target=binFolder+cutLib, source= cutFiles)
@@ -146,8 +165,10 @@ RegisterSrcFolderInEnv(testCutFolders, env, binFolder)
 RegisterSrcFolderInEnv(genTestFolders, env, binFolder)
 env.Library(target=binFolder+testComLib, source= testComFiles)
 
-for f in testCutFiles:
-    of=f.split(os.sep)[-1].split('.')[0]
-    print("Build executable %s" % of)
+if target != 'emlib':
+    for f in testCutFiles:
+        of=f.split(os.sep)[-1].split('.')[0]
+        print("Build executable %s" % of)
+        env.Program(binFolder+of, (f,))
+else:
     env.Program(binFolder+of, (f,))
-   

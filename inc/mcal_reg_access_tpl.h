@@ -21,7 +21,8 @@ namespace mcal
 {
 	namespace reg
 	{
-		template<typename addr_type,
+		template<
+		   typename addr_type,
 		   typename reg_type,
 		   const addr_type address,
 		   const reg_type value = static_cast<reg_type>(0)>

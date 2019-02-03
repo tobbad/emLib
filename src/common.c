@@ -48,5 +48,3 @@ void device_print(const device_t * dev){
 		printf("close = %p\n",dev->close);
     }
 }
-
-

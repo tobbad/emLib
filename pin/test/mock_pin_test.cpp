@@ -1,6 +1,6 @@
 
 
-#include "pin_mock.h"
+#include "pin.h"
 
 //CppUTest includes should be after your and system includes
 #include "CppUTest/TestHarness.h"
@@ -12,7 +12,7 @@ TEST_GROUP(PIN) {
 
 	void setup()
 	{
-		pin = new PinMock(Port::port_t::PORTA, Pin::pin_t::PIN_0);
+		pin = new Pin(Port::port_t::PORTA, Pin::pin_t::PIN_0);
 	}
 
 	void teardown()

@@ -45,17 +45,17 @@ class Pin {
 		};
 
 	public:
+        Pin(Port::port_t port, Pin::pin_t pin);
 		virtual ~Pin() {};
-		virtual bool 	read() = 0;
-		virtual elres_t write(bool value) = 0;
-		virtual elres_t mode(pin_mode_t mode) = 0;
+		virtual bool 	read();
+		virtual elres_t write(bool value);
+		virtual elres_t mode(pin_mode_t mode);
 
 
 	private:
 		Pin& operator=(const Pin&);
 
 	protected:
-		Pin(Port::port_t port, Pin::pin_t pin):port(port), pin(pin){};
 		Pin():port(Port::port_t::PORT_NA), pin(Pin::pin_t::PIN_NA){};
 		Port::port_t port;
 		Pin::pin_t pin;
@@ -63,5 +63,7 @@ class Pin {
 	public:
 
 };
+
+
 
 #endif  // D_Pin_H

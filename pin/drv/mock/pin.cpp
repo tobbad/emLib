@@ -5,20 +5,21 @@
  *      Author: badi
  */
 
-#include "pin_mock.h"
+#include "pin.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 
 
+Pin::Pin(Port::port_t port, Pin::pin_t pin):port(port), pin(pin){};
 
-bool PinMock::read(){
+bool Pin::read(){
 	bool ret = mock().actualCall("read")
 					 .onObject(this)
 					 .returnBoolValue();
 	return ret;
 };
 
-elres_t PinMock::write(bool value){
+elres_t Pin::write(bool value){
 	uint32_t ret = mock().actualCall("write")
 					 .onObject(this)
 					 .withParameter("value", value)
@@ -27,7 +28,7 @@ elres_t PinMock::write(bool value){
 
 };
 
-elres_t PinMock::mode(pin_mode_t mode){
+elres_t Pin::mode(pin_mode_t mode){
 	uint32_t ret = mock().actualCall("mode")
 					 .onObject(this)
 					 .withParameter("mode", static_cast<uint32_t>(mode))
