@@ -1,63 +1,63 @@
 #include "hal_defines.h"
 
 #include "pin.h"
+#include "MockPin.h"
 
-//CppUTest includes should be after your and system includes
-#include "CppUTest/TestHarness.h"
-#include "CppUTestExt/MockSupport.h"
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
+using ::testing::Return;
 
 uint8_t periphery[0x50060C00 - 0x40000000];
 
-TEST_GROUP(PIN) {
+class PINTest : public ::testing::Test {
+    protected:
 
-	Pin * pin;
+    void SetUp() override {
+    }
 
-	void setup()
-	{
-		pin = new Pin(Port::port_t::PORTA, Pin::pin_t::PIN_0);
-	}
+    void TearDown() override
+    {
+    }
 
-	void teardown()
-	{
-		delete pin;
-	}
+    MockPin pin;
+
+
 };
 
-TEST(PIN, Read)
+TEST_F(PINTest, Read)
 {
 	bool exp, act;
 
 	exp = true;
-	mock().expectOneCall("read").onObject(pin).andReturnValue(exp);
-	act = pin->read();
-	CHECK_EQUAL(act, exp);
+	EXPECT_CALL(pin, read()).Times(1).WillOnce(Return(exp));
+	act = pin.read();
+	ASSERT_EQ(act, exp);
 
 	exp = false;
-	mock().expectOneCall("read").onObject(pin).andReturnValue(exp);
-	act = pin->read();
-	CHECK_EQUAL(act, exp);
+    EXPECT_CALL(pin, read()).Times(1).WillOnce(Return(exp));
+	act = pin.read();
+	ASSERT_EQ(act, exp);
 }
 
-TEST(PIN, Write)
+TEST_F(PINTest, Write)
 {
 	bool value;
 	elres_t exp, act;
 
 	exp = EMLIB_OK;
 	value = true;
-	mock().expectOneCall("write").onObject(pin).withParameter("value", value).andReturnValue(exp);
-	act = pin->write(value);
-	CHECK_EQUAL(act, exp);
+	EXPECT_CALL(pin, write(value)).Times(1).WillOnce(Return(exp));
+	act = pin.write(value);
+	ASSERT_EQ(act, exp);
 }
-
-TEST(PIN, Mode)
+TEST_F(PINTest, Mode)
 {
 	elres_t exp, act;
 	Pin::pin_mode_t mode = Pin::pin_mode_t::OUTPUT;
 
 	exp = EMLIB_ERROR;
-	mock().expectOneCall("mode").onObject(pin).withParameter("mode", static_cast<uint32_t>(mode)).andReturnValue(exp);
-	act = pin->mode(mode);
-	CHECK_EQUAL(act, exp);
+    EXPECT_CALL(pin, mode(mode)).Times(1).WillOnce(Return(exp));
+	act = pin.mode(mode);
+	ASSERT_EQ(act, exp);
 }
-

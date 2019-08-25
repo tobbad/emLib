@@ -6,8 +6,7 @@
  */
 
 #include "pin.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTestExt/MockSupport.h"
+#include "gmock/gmock.h"
 
 
 Pin::Pin(Port::port_t port, Pin::pin_t pin):port(port), pin(pin){};

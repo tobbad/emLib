@@ -64,6 +64,21 @@ xcompile_options = {
 }
 compile_opt={}
 
+#
+# Google test setup from :http://www.solasistim.net/posts/scons_and_google_mock/
+#
+googletest_framework_root = "test/googletest"
+
+googletest_include_paths = (
+    googletest_framework_root + "/googletest",
+    googletest_framework_root + "/googletest/include",
+    googletest_framework_root + "/googlemock",
+    googletest_framework_root + "/googlemock/include"
+)
+
+gtest_all_path = googletest_framework_root + "/googletest/src/gtest-all.cc"
+gmock_all_path = googletest_framework_root + "/googlemock/src/gmock-all.cc"
+
 if ARGUMENTS.get('debug', '0') == '1':
     print "*** Debug build..."
     binFolder = 'bin/Debug/'
@@ -102,8 +117,9 @@ elif target == 'test_display':
 elif target == 'test_pin':
     print("Create pin tests.")
     #cutFolders += ('./pin/drv/mock/', )
-    cutFolders += ('./pin/drv/stm32/f4/', )
+    #cutFolders += ('./pin/drv/stm32/f4/', )
     testCutFolders = ('./pin/test/',)
+    incPath+=(googletest_include_paths,)
     incPath+=('pin/inc/',)
     incPath+=('pin/test/',)
     incPath+=('pin/test/stm/',)
@@ -111,7 +127,7 @@ elif target == 'test_pin':
     incPath+=('pin/test/stm/f4/inc/',)
     incPath+=('pin/inc/',)
     incPath+=('port/inc/',)
-    linkLibs +=(drvLib,)
+    linkLibs +=(drvLib, 'pthread')
     linkFlags = ''
     ccFlags ='-DSTM32F407xx -DSTM32 -DUNIT_TEST '
 elif target == 'emlib':
@@ -129,9 +145,11 @@ else:
     print("Unknown target {0}".format(target))
     sys.exit()
 
-linkLibs += ('CppUTest','CppUTestExt')
+#linkLibs += ('CppUTest','CppUTestExt')
 testCutFiles += getSrcFromFolder(testCutFolders,'*test.cpp',binFolder)
 testComFiles += getSrcFromFolder(genTestFolders,'AllTests.cpp',binFolder)
+testComFiles += getSrcFromFolder((googletest_framework_root,), "googletest/src/gtest-all.cc",binFolder)
+testComFiles += getSrcFromFolder((googletest_framework_root,), "googlemock/src/gmock-all.cc",binFolder)
 cutFiles  = getSrcFromFolder(cutFolders,'*.cpp',binFolder)
 cutFiles += getSrcFromFolder(cutFolders,'*.c',binFolder)
 print(testComFiles)

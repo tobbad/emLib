@@ -5,15 +5,12 @@ bi	 * AllTests.cpp
  *      Author: badi
  */
 
-#include "CppUTest/CommandLineTestRunner.h"
-#include "CppUTest/TestRegistry.h"
-#include "CppUTestExt/MockSupportPlugin.h"
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
-
-int main(int ac, char** av)
+int main(int argc, char** argv)
 {
-    MockSupportPlugin mockPlugin;
-    TestRegistry::getCurrentRegistry()->installPlugin(&mockPlugin);
-    return CommandLineTestRunner::RunAllTests(ac, av);
+    testing::InitGoogleMock(&argc, argv);
+    return RUN_ALL_TESTS();
 }
 
