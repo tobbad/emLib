@@ -40,7 +40,11 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/times.h>
+#if defined(STM32F407xx)
+#include "stm32f4xx.h"
+#else
 #include "stm32l4xx.h"
+#endif
 #include "serial_io.h"
 
 
